@@ -21,6 +21,7 @@ struct InfoResultEntity {
     let primaryGenreName: String
     let minimumVersion: String // minimumOsVersion
     let corpName: String // artistName
+    let price: String // formattedPrice
     
     let screenShotsUrls: [String]
     let age: String // trackContentRating
@@ -44,6 +45,7 @@ extension AppInfoDTO {
                     primaryGenreName: $0.primaryGenreName,
                     minimumVersion: $0.minimumOSVersion,
                     corpName: $0.artistName,
+                    price: $0.formattedPrice,
                     screenShotsUrls: $0.screenshotUrls,
                     age: $0.trackContentRating,
                     languages: $0.languageCodesISO2A,

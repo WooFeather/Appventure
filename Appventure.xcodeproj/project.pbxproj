@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		790392942DBA7AB80030697E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 790392932DBA7AB80030697E /* .gitignore */; };
 		790392A82DBA7C6C0030697E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 790392A72DBA7C6C0030697E /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		790392792DBA78FE0030697E /* Appventure.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Appventure.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		790392932DBA7AB80030697E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,6 +41,7 @@
 			children = (
 				7903927B2DBA78FE0030697E /* Appventure */,
 				7903927A2DBA78FE0030697E /* Products */,
+				790392932DBA7AB80030697E /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
@@ -118,6 +121,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				790392942DBA7AB80030697E /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

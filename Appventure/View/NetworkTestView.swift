@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct NetworkTestView: View {
     
     let repo: ItunesRepositoryType = ItunesRepository.shared
     var body: some View {
@@ -50,5 +50,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    NetworkTestView()
 }

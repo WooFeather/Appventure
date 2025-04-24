@@ -25,7 +25,7 @@ struct TabBarView: View {
             ArcadeView()
                 .asTabModifier(.arcade)
             
-            AppSearch()
+            AppSearch(viewModel: AppSearchViewModel(repository: ItunesRepository.shared))
                 .asTabModifier(.search)
         }
     }

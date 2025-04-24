@@ -27,7 +27,7 @@ enum Tab: Identifiable, CaseIterable {
         case .app:
             return "square.stack.3d.up"
         case .arcade:
-            return "figure.play"
+            return "arcade.stick.console"
         case .search:
             return "magnifyingglass"
         }

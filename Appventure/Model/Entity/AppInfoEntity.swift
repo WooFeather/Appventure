@@ -49,7 +49,7 @@ extension AppInfoDTO {
                     screenShotsUrls: $0.screenshotUrls,
                     age: $0.trackContentRating,
                     languages: $0.languageCodesISO2A,
-                    releaseNotes: $0.releaseNotes,
+                    releaseNotes: $0.releaseNotes ?? "",
                     currentReleaseDate: $0.currentVersionReleaseDate,
                     version: $0.version
                 )

@@ -34,7 +34,8 @@ struct InfoResultDTO: Codable {
     let currentVersionReleaseDate: String
     let sellerName: String
     let genreIDS: [String]
-    let releaseNotes, trackName: String
+    let releaseNotes: String?
+    let trackName: String
     let trackID: Int
     let isVppDeviceBasedLicensingEnabled: Bool
     let primaryGenreName: String

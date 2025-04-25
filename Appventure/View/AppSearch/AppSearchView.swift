@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AppSearch: View {
+struct AppSearchView: View {
     @StateObject var viewModel: AppSearchViewModel
     
     var body: some View {
@@ -29,9 +29,11 @@ struct AppSearch: View {
             .navigationTitle("검색")
         }
     }
-    
-    // MARK: - Function
-    private func searchResultView() -> some View {
+}
+
+// MARK: - SearchResult
+private extension AppSearchView {
+    func searchResultView() -> some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
                 ForEach(viewModel.output.results, id: \.id) { app in
@@ -91,14 +93,7 @@ struct AppSearchCell: View {
 
             Spacer()
 
-            Button(action: {}) {
-                Text("받기")
-                    .font(.system(size: 14, weight: .semibold))
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 22)
-                    .background(Color(.systemGray5))
-                    .clipShape(Capsule())
-            }
+            ActionButton()
         }
     }
     
@@ -158,5 +153,5 @@ struct AppSearchCell: View {
 }
 
 #Preview {
-    AppSearch(viewModel: AppSearchViewModel(repository: ItunesRepository.shared))
+    AppSearchView(viewModel: AppSearchViewModel(repository: ItunesRepository.shared))
 }

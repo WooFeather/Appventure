@@ -38,7 +38,7 @@ struct AppDetailView: View {
     }
 }
 
-// MARK: - SECTION 1. 헤더
+// MARK: - Header
 private extension AppDetailView {
     func header(_ app: InfoResultEntity) -> some View {
         HStack(alignment: .top, spacing: 16) {
@@ -48,9 +48,9 @@ private extension AppDetailView {
                     img
                         .resizable()
                 case .empty:
-                    ProgressView()
+                    Color.gray
                 default:
-                    Image(systemName: "app").resizable()
+                    ProgressView()
                 }
             }
             .frame(width: 100, height: 100)
@@ -63,21 +63,14 @@ private extension AppDetailView {
                 
                 Spacer()
                 
-                // TODO: Custom으로 빼기
-                Button("열기") { /* 앱 실행 로직 */ }
-                    .font(.system(size: 14, weight: .semibold))
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 22)
-                    .background(Color(.systemGray5))
-                    .clipShape(Capsule())
+                ActionButton()
             }
         }
         .padding(.horizontal)
     }
 }
-// MARK: - SECTION 2. 메타 정보 (버전·연령·카테고리·개발자)
+// MARK: - MetaInfo
 private extension AppDetailView {
-    
     func metaCard(_ label: String, _ value: String) -> some View {
         VStack(spacing: 6) {
             Text(label)
@@ -119,18 +112,17 @@ private extension AppDetailView {
     }
 }
 
-// MARK: - SECTION 3. 새로운 소식 (릴리즈 노트)
+// MARK: - NewFeature
 private extension AppDetailView {
     func newFeatures(_ app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("새로운 소식")
-                .font(.headline)
-                .padding(.horizontal)
+                .asSectionTitle()
             
             HStack {
                 Text("버전 \(app.version)")
                 Spacer()
-                Text(relativeDate(app.currentReleaseDate))
+                Text(app.currentReleaseDate.relativeDate)
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
@@ -142,24 +134,14 @@ private extension AppDetailView {
                 .padding(.horizontal)
         }
     }
-    
-    // TODO: Extension
-    func relativeDate(_ iso: String) -> String {
-        let isoFormatter = ISO8601DateFormatter()
-        guard let date = isoFormatter.date(from: iso) else { return "" }
-        let relFormatter = RelativeDateTimeFormatter()
-        relFormatter.unitsStyle = .abbreviated
-        return relFormatter.localizedString(for: date, relativeTo: .now)
-    }
 }
 
-// MARK: - SECTION 4. 미리 보기 (스크린샷 캐러셀)
+// MARK: - Screenshot
 private extension AppDetailView {
     func previewScreenshots(_ app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("미리 보기")
-                .font(.headline)
-                .padding(.horizontal)
+                .asSectionTitle()
             
             // TODO: 탭하면 스크린샷 확대 화면 sheet
             ScrollView(.horizontal, showsIndicators: false) {
@@ -171,9 +153,9 @@ private extension AppDetailView {
                                 img.resizable()
                                    .aspectRatio(0.55, contentMode: .fit)
                             case .empty:
-                                ProgressView()
-                            default:
                                 Color.gray.opacity(0.2)
+                            default:
+                                ProgressView()
                             }
                         }
                         .frame(width: 230)
@@ -181,25 +163,28 @@ private extension AppDetailView {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 4)
             }
         }
         .padding(.vertical)
     }
 }
-// MARK: - SECTION 5. 추가 정보 (지원 언어·가격 등)
+// MARK: - AdditionalInfo
 private extension AppDetailView {
-    
     func additionalInfo(_ app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("정보")
-                .font(.headline)
-                .padding(.horizontal)
+                .asSectionTitle()
             
             infoRow("카테고리", app.genres.first ?? app.primaryGenreName)
+            Divider()
+                .padding(.horizontal)
             infoRow("가격", app.price)
+            Divider()
+                .padding(.horizontal)
             infoRow("최소 버전", "iOS \(app.minimumVersion)+")
-            infoRow("지원 언어", languageLine(app.languages))
+            Divider()
+                .padding(.horizontal)
+            infoRow("지원 언어", app.languages.languageWithCount)
         }
         .padding(.bottom)
     }
@@ -217,13 +202,6 @@ private extension AppDetailView {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
-    }
-    
-    // TODO: Extension
-    func languageLine(_ langs: [String]) -> String {
-        guard let first = langs.first else { return "-" }
-        if langs.count <= 2 { return langs.joined(separator: ", ") }
-        return first + " 외 \(langs.count - 1)개"
     }
 }
 

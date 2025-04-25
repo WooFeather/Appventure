@@ -19,13 +19,22 @@ struct TabBarView: View {
             GameView()
                 .asTabModifier(.game)
             
-            MyAppView()
+            MyAppView(
+                viewModel: MyAppViewModel(
+                    networkRepo: ItunesRepository.shared,
+                    realmRepo: RealmRepository.shared
+                )
+            )
                 .asTabModifier(.app)
             
             ArcadeView()
                 .asTabModifier(.arcade)
             
-            AppSearchView(viewModel: AppSearchViewModel(repository: ItunesRepository.shared))
+            AppSearchView(
+                viewModel: AppSearchViewModel(
+                    repository: ItunesRepository.shared
+                )
+            )
                 .asTabModifier(.search)
         }
     }

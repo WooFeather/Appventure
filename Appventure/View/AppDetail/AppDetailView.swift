@@ -58,7 +58,7 @@ private extension AppDetailView {
                 
                 Spacer()
                 
-                ActionButton()
+                ActionButton(appId: app.id)
             }
         }
         .padding(.horizontal)

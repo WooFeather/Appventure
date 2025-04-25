@@ -8,11 +8,23 @@
 import SwiftUI
 
 struct MyAppView: View {
+    @StateObject var viewModel: MyAppViewModel
+    
     var body: some View {
-        Text("MyApp")
+        NavigationStack {
+            VStack {
+                Text("MyApp")
+            }
+            .navigationTitle("앱")
+        }
     }
 }
 
 #Preview {
-    MyAppView()
+    MyAppView(
+        viewModel: MyAppViewModel(
+            networkRepo: ItunesRepository.shared,
+            realmRepo: RealmRepository.shared
+        )
+    )
 }

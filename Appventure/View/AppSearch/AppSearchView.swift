@@ -87,7 +87,7 @@ struct AppSearchCell: View {
 
             Spacer()
 
-            ActionButton()
+            ActionButton(appId: app.id)
         }
     }
     

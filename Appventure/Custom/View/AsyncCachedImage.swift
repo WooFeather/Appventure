@@ -43,21 +43,17 @@ struct AsyncCachedImage<ImageView: View, PlaceholderView: View>: View {
         do {
             guard let url else { return nil }
             
-            // Check if the image is cached already
             if let cachedResponse = URLCache.shared.cachedResponse(for: .init(url: url)) {
-                print("CachedImage")
                 return UIImage(data: cachedResponse.data)
             } else {
                 let (data, response) = try await URLSession.shared.data(from: url)
                 
-                // Save returned image data into the cache
                 URLCache.shared.storeCachedResponse(.init(response: response, data: data), for: .init(url: url))
                 
                 guard let image = UIImage(data: data) else {
                     return nil
                 }
                 
-                print("LoadImage")
                 return image
             }
         } catch {

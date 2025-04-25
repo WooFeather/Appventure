@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct AppDetailView: View {
+    @StateObject var viewModel: AppDetailViewModel
+    var appId: Int
+    
     var body: some View {
-        Text("AppDetail")
+        VStack {
+            Text(viewModel.output.app?.name ?? "")
+        }
+        .onAppear {
+            viewModel.action(.fetchApp(appId))
+        }
     }
 }
 
 #Preview {
-    AppDetailView()
+    AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: 1464496236)
 }

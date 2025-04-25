@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// TODO: 당겨서 새로고침
+// TODO: 페이지네이션
 struct AppSearchView: View {
     @StateObject var viewModel: AppSearchViewModel
     
@@ -63,22 +65,14 @@ struct AppSearchCell: View {
     // MARK: - Cell Function
     private func basicInfo(_ app: InfoResultEntity) -> some View {
         HStack(alignment: .center, spacing: 12) {
-            AsyncImage(url: URL(string: app.iconUrl)) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .cornerRadius(12)
-                case .failure(_):
-                    Color.gray
-                        .frame(width: 60, height: 60)
-                        .cornerRadius(12)
-                default:
-                    ProgressView()
-                        .frame(width: 60, height: 60)
-                }
+            AsyncCachedImage(url: URL(string: app.iconUrlSmall)) { image in
+                image
+                    .resizable()
+            } placeholder: {
+                ProgressView()
             }
+            .frame(width: 60, height: 60)
+            .cornerRadius(12)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(app.name)
@@ -124,26 +118,16 @@ struct AppSearchCell: View {
 
                 HStack(spacing: spacing) {
                     ForEach(app.screenShotsUrls.prefix(3), id: \.self) { url in
-                        AsyncImage(url: URL(string: url)) { phase in
-                            switch phase {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(9/16, contentMode: .fit)
-                                    .frame(width: imageWidth)
-                                    .cornerRadius(12)
-                                    .clipped()
-                            case .failure(_):
-                                Color.gray
-                                    .frame(width: imageWidth)
-                                    .aspectRatio(9/16, contentMode: .fit)
-                                    .cornerRadius(12)
-                            default:
-                                ProgressView()
-                                    .frame(width: imageWidth)
-                                    .aspectRatio(9/16, contentMode: .fit)
-                            }
+                        AsyncCachedImage(url: URL(string: url)) { image in
+                            image
+                                .resizable()
+                                .clipped()
+                        } placeholder: {
+                            ProgressView()
                         }
+                        .aspectRatio(9/16, contentMode: .fit)
+                        .frame(width: imageWidth)
+                        .cornerRadius(12)
                     }
                 }
             }

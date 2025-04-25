@@ -16,7 +16,8 @@ struct InfoResultEntity {
     let id: Int // trackID
     
     let name: String // trackName
-    let iconUrl: String // artworkUrl100
+    let iconUrlLarge: String // artworkUrl512
+    let iconUrlSmall: String // artworkUrl100
     let genres: [String]
     let primaryGenreName: String
     let minimumVersion: String // minimumOsVersion
@@ -40,7 +41,8 @@ extension AppInfoDTO {
                 InfoResultEntity(
                     id: $0.trackID,
                     name: $0.trackName,
-                    iconUrl: $0.artworkUrl100,
+                    iconUrlLarge: $0.artworkUrl512,
+                    iconUrlSmall: $0.artworkUrl100,
                     genres: $0.genres,
                     primaryGenreName: $0.primaryGenreName,
                     minimumVersion: $0.minimumOSVersion,

@@ -42,16 +42,11 @@ struct AppDetailView: View {
 private extension AppDetailView {
     func header(_ app: InfoResultEntity) -> some View {
         HStack(alignment: .top, spacing: 16) {
-            AsyncImage(url: URL(string: app.iconUrl)) { phase in
-                switch phase {
-                case .success(let img):
-                    img
-                        .resizable()
-                case .empty:
-                    Color.gray
-                default:
-                    ProgressView()
-                }
+            AsyncCachedImage(url: URL(string: app.iconUrlLarge)) { image in
+                image
+                    .resizable()
+            } placeholder: {
+                ProgressView()
             }
             .frame(width: 100, height: 100)
             .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
@@ -147,16 +142,12 @@ private extension AppDetailView {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(app.screenShotsUrls, id: \.self) { url in
-                        AsyncImage(url: URL(string: url)) { phase in
-                            switch phase {
-                            case .success(let img):
-                                img.resizable()
-                                   .aspectRatio(0.55, contentMode: .fit)
-                            case .empty:
-                                Color.gray.opacity(0.2)
-                            default:
-                                ProgressView()
-                            }
+                        AsyncCachedImage(url: URL(string: url)) { image in
+                            image
+                                .resizable()
+                               .aspectRatio(0.55, contentMode: .fit)
+                        } placeholder: {
+                            ProgressView()
                         }
                         .frame(width: 230)
                         .clipShape(RoundedRectangle(cornerRadius: 12))

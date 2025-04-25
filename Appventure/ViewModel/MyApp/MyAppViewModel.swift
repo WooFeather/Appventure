@@ -8,6 +8,15 @@
 import Foundation
 import Combine
 
+
+// MARK: - DownloadedAppItem
+struct DownloadedAppItem: Identifiable {
+    let id: String
+    let info: InfoResultEntity
+    let date: Date
+}
+
+// MARK: - ViewModel
 final class MyAppViewModel: ViewModelType {
     private let networkRepo: ItunesRepositoryType
     private let realmRepo: RealmRepositoryType
@@ -35,7 +44,7 @@ final class MyAppViewModel: ViewModelType {
     }
     
     struct Output {
-        var downloadedApps: [InfoResultEntity] = []
+        var downloadedApps: [DownloadedAppItem] = []
         var isLoading: Bool = false
     }
 }
@@ -57,7 +66,17 @@ extension MyAppViewModel {
 // MARK: - Transform
 extension MyAppViewModel {
     func transform() {
-        
+        input.fetchDownloaded
+            .sink { [weak self] _ in
+                Task {
+                    do {
+                        try await self?.fetchDownloadedApps()
+                    } catch {
+                        throw error
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -67,7 +86,27 @@ extension MyAppViewModel {
     private func fetchDownloadedApps() async throws {
         output.isLoading = true
         
-        // realm에서 불러오기
+        let realmObjects = realmRepo.fetchAll()
+        let idDateMap = Dictionary(uniqueKeysWithValues:
+            realmObjects.map { ($0.id, $0.createdAt) })
+        
+        let ids = realmObjects
+            .sorted(by: { $0.createdAt > $1.createdAt })
+            .map(\.id)
+        
+        do {
+            let response = try await networkRepo.lookup(ids: ids)
+            
+            let items: [DownloadedAppItem] = ids.compactMap { id in
+                guard let info = response.results.first(where: { $0.id == id }),
+                      let date = idDateMap[id] else { return nil }
+                return DownloadedAppItem(id: id, info: info, date: date)
+            }
+            output.downloadedApps = items
+        } catch {
+            output.downloadedApps = []
+            throw error
+        }
         
         output.isLoading = false
     }

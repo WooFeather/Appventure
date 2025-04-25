@@ -13,7 +13,7 @@ struct AppInfoEntity {
 }
 
 struct InfoResultEntity {
-    let id: Int // trackID
+    let id: String // trackID
     
     let name: String // trackName
     let iconUrlLarge: String // artworkUrl512
@@ -39,7 +39,7 @@ extension AppInfoDTO {
             resultCount: self.resultCount,
             results: self.results.map {
                 InfoResultEntity(
-                    id: $0.trackID,
+                    id: "\($0.trackID)",
                     name: $0.trackName,
                     iconUrlLarge: $0.artworkUrl512,
                     iconUrlSmall: $0.artworkUrl100,

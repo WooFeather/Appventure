@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppDetailView: View {
     @StateObject var viewModel: AppDetailViewModel
-    let appId: Int
+    let appId: String
     
     var body: some View {
         Group {
@@ -108,6 +108,7 @@ private extension AppDetailView {
 }
 
 // MARK: - NewFeature
+// TODO: 더보기로 확장
 private extension AppDetailView {
     func newFeatures(_ app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -198,5 +199,5 @@ private extension AppDetailView {
 
 
 #Preview {
-    AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: 1464496236)
+    AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: "1464496236")
 }

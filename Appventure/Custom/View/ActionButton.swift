@@ -11,13 +11,13 @@ import RealmSwift
 struct ActionButton: View {
     @ObservedResults(DownloadedObject.self) private var downloaded
     private var repository = RealmRepository.shared
-    let appId: Int
+    let appId: String
     
     private var isDownloaded: Bool {
         downloaded.contains(where: { $0.id == appId })
     }
     
-    init(appId: Int) {
+    init(appId: String) {
         self.appId = appId
     }
     

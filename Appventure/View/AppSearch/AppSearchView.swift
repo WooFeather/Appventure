@@ -25,7 +25,7 @@ struct AppSearchView: View {
             .onSubmit(of: .search) {
                 viewModel.action(.search)
             }
-            .navigationDestination(for: Int.self) {
+            .navigationDestination(for: String.self) {
                 AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: $0)
             }
             .navigationTitle("검색")

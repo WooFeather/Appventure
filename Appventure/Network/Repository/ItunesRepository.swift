@@ -9,7 +9,7 @@ import Foundation
 
 protocol ItunesRepositoryType {
     func search(term: String, offset: Int) async throws -> AppInfoEntity
-    func lookup(id: Int) async throws -> AppInfoEntity
+    func lookup(ids: [String]) async throws -> AppInfoEntity
 }
 
 final class ItunesRepository: ItunesRepositoryType {
@@ -28,9 +28,9 @@ final class ItunesRepository: ItunesRepositoryType {
         }
     }
     
-    func lookup(id: Int) async throws -> AppInfoEntity {
+    func lookup(ids: [String]) async throws -> AppInfoEntity {
         do {
-            let result: AppInfoDTO = try await networkManager.fetchData(ItunesRouter.lookup(id: id))
+            let result: AppInfoDTO = try await networkManager.fetchData(ItunesRouter.lookup(ids: ids))
             return result.toEntity()
         } catch {
             print("error: \(error)")

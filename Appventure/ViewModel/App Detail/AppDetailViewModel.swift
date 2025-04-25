@@ -28,7 +28,7 @@ final class AppDetailViewModel: ViewModelType {
     }
     
     struct Input {
-        var fetchApp = PassthroughSubject<Int, Never>()
+        var fetchApp = PassthroughSubject<String, Never>()
     }
     
     struct Output {
@@ -40,7 +40,7 @@ final class AppDetailViewModel: ViewModelType {
 // MARK: - Action
 extension AppDetailViewModel {
     enum Action {
-        case fetchApp(Int)
+        case fetchApp(String)
     }
     
     func action(_ action: Action) {
@@ -71,12 +71,12 @@ extension AppDetailViewModel {
 // MARK: - Function
 @MainActor
 extension AppDetailViewModel {
-    private func fetchApp(id: Int) async throws {
+    private func fetchApp(id: String) async throws {
         output.isLoading = true
         
         do {
-            let response = try await repository.lookup(id: id).results
-            output.app = response.first
+            let response = try await repository.lookup(ids: [id]).results.first!
+            output.app = response
         } catch {
             output.app = nil
             throw error

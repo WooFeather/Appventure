@@ -30,11 +30,15 @@ final class AppSearchViewModel: ViewModelType {
     struct Input {
         var term: String = ""
         let searchTapped = PassthroughSubject<Void, Never>()
+        let loadMore = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
         var results: [InfoResultEntity] = []
         var isLoading: Bool = false
+        var isLoadingMore: Bool = false
+        var currentOffset: Int = 0
+        var hasMoreResults: Bool = true
     }
 }
 
@@ -42,12 +46,15 @@ final class AppSearchViewModel: ViewModelType {
 extension AppSearchViewModel {
     enum Action {
         case search
+        case loadMore
     }
     
     func action(_ action: Action) {
         switch action {
         case .search:
             input.searchTapped.send(())
+        case .loadMore:
+            input.loadMore.send(())
         }
     }
 }
@@ -62,9 +69,33 @@ extension AppSearchViewModel {
             .removeDuplicates()
             .filter { !$0.isEmpty }
             .sink { [weak self] term in
+                guard let self = self else { return }
+                
+                Task { @MainActor in
+                    do {
+                        self.output.currentOffset = 0
+                        self.output.hasMoreResults = true
+                        try await self.fetchSearchData(for: term, offset: 0, isLoadingMore: false)
+                    } catch {
+                        throw error
+                    }
+                }
+            }
+            .store(in: &cancellables)
+        
+        // Add handler for loading more results
+        input.loadMore
+            .filter { [weak self] in
+                guard let self = self else { return false }
+                return !self.output.isLoadingMore && self.output.hasMoreResults
+            }
+            .sink { [weak self] _ in
+                guard let self = self, !self.input.term.isEmpty else { return }
+                
                 Task {
                     do {
-                        try await self?.fetchSearchData(for: term)
+                        let nextOffset = self.output.currentOffset + 20
+                        try await self.fetchSearchData(for: self.input.term, offset: nextOffset, isLoadingMore: true)
                     } catch {
                         throw error
                     }
@@ -77,17 +108,48 @@ extension AppSearchViewModel {
 // MARK: - Function
 @MainActor
 extension AppSearchViewModel {
-    func fetchSearchData(for term: String, offset: Int = 0) async throws {
-        output.isLoading = true
+    func fetchSearchData(for term: String, offset: Int = 0, isLoadingMore: Bool = false) async throws {
+        if isLoadingMore {
+            output.isLoadingMore = true
+        } else {
+            output.isLoading = true
+        }
         
         do {
             let response = try await repository.search(term: term, offset: offset)
-            output.results = response.results
+            
+            if isLoadingMore {
+                let existingIds = Set(output.results.map { $0.id })
+                let newResults = response.results.filter { !existingIds.contains($0.id) }
+                
+                // Append new unique results
+                output.results.append(contentsOf: newResults)
+                
+                if newResults.isEmpty && !response.results.isEmpty {
+                    output.isLoadingMore = false
+                    try await fetchSearchData(for: term, offset: offset + 20, isLoadingMore: true)
+                    return
+                }
+                
+                output.hasMoreResults = !newResults.isEmpty
+            } else {
+                output.results = response.results
+                output.hasMoreResults = !response.results.isEmpty
+            }
+            
+            output.currentOffset = offset
         } catch {
-            output.results = []
+            if !isLoadingMore {
+                output.results = []
+            }
+            output.hasMoreResults = false
             throw error
         }
         
-        output.isLoading = false
+        if isLoadingMore {
+            output.isLoadingMore = false
+        } else {
+            output.isLoading = false
+        }
     }
 }

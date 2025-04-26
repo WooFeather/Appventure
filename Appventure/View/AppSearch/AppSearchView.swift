@@ -8,7 +8,6 @@
 import SwiftUI
 
 // TODO: 당겨서 새로고침
-// TODO: 페이지네이션
 // TODO: 취소버튼 눌렀을때 아무것도 안뜨게
 struct AppSearchView: View {
     @StateObject var viewModel: AppSearchViewModel
@@ -44,12 +43,32 @@ private extension AppSearchView {
                         AppSearchCell(app: app)
                     }
                 }
+                
+                if !viewModel.output.results.isEmpty {
+                    HStack {
+                        Spacer()
+                        if viewModel.output.isLoadingMore {
+                            ProgressView()
+                                .padding()
+                        } else if viewModel.output.hasMoreResults {
+                            Button("더 보기") {
+                                viewModel.action(.loadMore)
+                            }
+                            .padding()
+                        }
+                        Spacer()
+                    }
+                    .onAppear {
+                        if !viewModel.output.isLoadingMore && viewModel.output.hasMoreResults {
+                            viewModel.action(.loadMore)
+                        }
+                    }
+                }
             }
             .padding(.top)
         }
     }
 }
-
 // MARK: - Cell
 struct AppSearchCell: View {
     let app: InfoResultEntity

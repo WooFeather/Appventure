@@ -114,7 +114,8 @@ private extension AppDetailView {
 // TODO: 더보기로 확장
 private extension AppDetailView {
     func newFeatures(_ app: InfoResultEntity) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        
+        return VStack(alignment: .leading, spacing: 8) {
             Text("새로운 소식")
                 .asSectionTitle()
             
@@ -127,15 +128,15 @@ private extension AppDetailView {
             .foregroundStyle(.secondary)
             .padding(.horizontal)
             
-            Text(app.releaseNotes.isEmpty ? "릴리즈 노트가 없습니다." : app.releaseNotes)
+            ExpandableText(app.releaseNotes, lineLimit: 3)
                 .font(.callout)
-                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal)
         }
     }
 }
 
 // MARK: - Screenshot
+// TODO: 스크린샷이 없을때 대응
 private extension AppDetailView {
     func previewScreenshots(_ app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 8) {

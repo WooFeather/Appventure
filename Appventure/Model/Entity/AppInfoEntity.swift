@@ -47,7 +47,7 @@ extension AppInfoDTO {
                     primaryGenreName: $0.primaryGenreName,
                     minimumVersion: $0.minimumOSVersion,
                     corpName: $0.artistName,
-                    price: $0.formattedPrice,
+                    price: $0.formattedPrice ?? "가격 정보 없음",
                     screenShotsUrls: $0.screenshotUrls,
                     age: $0.trackContentRating,
                     languages: $0.languageCodesISO2A,

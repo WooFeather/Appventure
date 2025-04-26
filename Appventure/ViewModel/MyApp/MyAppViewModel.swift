@@ -40,9 +40,9 @@ final class MyAppViewModel: ViewModelType {
     }
     
     struct Input {
-        var fetchDownloaded = PassthroughSubject<Void, Never>()
-        var deleteApp = PassthroughSubject<String, Never>()
-        var searchQuery = CurrentValueSubject<String, Never>("")
+        let fetchDownloaded = PassthroughSubject<Void, Never>()
+        let deleteApp = PassthroughSubject<String, Never>()
+        let searchQuery = CurrentValueSubject<String, Never>("")
     }
     
     struct Output {

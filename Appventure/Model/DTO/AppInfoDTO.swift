@@ -29,7 +29,7 @@ struct InfoResultDTO: Codable {
     let artistID: Int
     let artistName: String
     let genres: [String]
-    let price: Double
+    let price: Double?
     let bundleID: String
     let currentVersionReleaseDate: String
     let sellerName: String
@@ -48,7 +48,7 @@ struct InfoResultDTO: Codable {
     let minimumOSVersion: String
     let languageCodesISO2A: [String]
     let fileSizeBytes: String
-    let formattedPrice: String
+    let formattedPrice: String?
     let userRatingCountForCurrentVersion: Int
     let trackContentRating: String
     let trackCensoredName: String

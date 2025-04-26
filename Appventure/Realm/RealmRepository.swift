@@ -13,6 +13,7 @@ protocol RealmRepositoryType {
     func fetchAll() -> [DownloadedObject]
     func save(_ downloaded: DownloadedObject)
     func delete(by id: String)
+    func getAllDownloadedIDs() -> [String]
 }
 
 final class RealmRepository: RealmRepositoryType {
@@ -49,4 +50,9 @@ final class RealmRepository: RealmRepositoryType {
             print("❌ Realm delete 오류:", error)
         }
     }
+    
+    func getAllDownloadedIDs() -> [String] {
+        let realm = try! Realm()
+        return realm.objects(DownloadedObject.self).map { $0.id }
+      }
 }

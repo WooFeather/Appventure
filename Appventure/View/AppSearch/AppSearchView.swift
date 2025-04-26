@@ -39,7 +39,7 @@ private extension AppSearchView {
             LazyVStack(alignment: .leading, spacing: 20) {
                 ForEach(viewModel.output.results, id: \.id) { app in
                     NavigationLink(value: app.id) {
-                        AppSearchCell(app: app)
+                        appSearchCell(app: app)
                     }
                 }
                 
@@ -73,11 +73,10 @@ private extension AppSearchView {
         }
     }
 }
-// MARK: - Cell
-struct AppSearchCell: View {
-    let app: InfoResultEntity
 
-    var body: some View {
+// MARK: - AppSearchCell
+extension AppSearchView {
+    func appSearchCell(app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             basicInfo(app)
             detailInfo(app)
@@ -86,7 +85,6 @@ struct AppSearchCell: View {
         .padding()
     }
     
-    // MARK: - Cell Function
     private func basicInfo(_ app: InfoResultEntity) -> some View {
         HStack(alignment: .center, spacing: 12) {
             AsyncCachedImage(url: URL(string: app.iconUrlSmall)) { image in
@@ -133,7 +131,8 @@ struct AppSearchCell: View {
     
     @ViewBuilder
     private func screenshots(_ app: InfoResultEntity) -> some View {
-        if !app.screenShotsUrls.isEmpty {
+        if !viewModel.output.downloadedIDs.contains(app.id),
+           !app.screenShotsUrls.isEmpty {
             GeometryReader { geometry in
                 let spacing: CGFloat = 12
                 let imageCount = min(3, app.screenShotsUrls.count)
@@ -161,5 +160,10 @@ struct AppSearchCell: View {
 }
 
 #Preview {
-    AppSearchView(viewModel: AppSearchViewModel(repository: ItunesRepository.shared))
+    AppSearchView(
+        viewModel: AppSearchViewModel(
+            networkRepo: ItunesRepository.shared,
+            realmRepo: RealmRepository.shared
+        )
+    )
 }

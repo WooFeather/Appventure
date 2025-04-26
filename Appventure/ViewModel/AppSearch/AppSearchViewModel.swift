@@ -9,18 +9,21 @@ import Foundation
 import Combine
 
 final class AppSearchViewModel: ViewModelType {
-    private let repository: ItunesRepositoryType
+    private let networkRepo: ItunesRepositoryType
+    private let realmRepo: RealmRepositoryType
     var cancellables: Set<AnyCancellable>
     var input: Input
     @Published var output: Output
     
     init(
-        repository: ItunesRepositoryType,
+        networkRepo: ItunesRepositoryType,
+        realmRepo: RealmRepositoryType,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
         input: Input = Input(),
         output: Output = Output()
     ) {
-        self.repository = repository
+        self.networkRepo = networkRepo
+        self.realmRepo = realmRepo
         self.cancellables = cancellables
         self.input = input
         self.output = output
@@ -39,6 +42,8 @@ final class AppSearchViewModel: ViewModelType {
         var isLoadingMore: Bool = false
         var currentOffset: Int = 0
         var hasMoreResults: Bool = true
+        var isDownloaded: Bool = false
+        var downloadedIDs: Set<String> = []
     }
 }
 
@@ -83,7 +88,6 @@ extension AppSearchViewModel {
             }
             .store(in: &cancellables)
         
-        // Add handler for loading more results
         input.loadMore
             .filter { [weak self] in
                 guard let self = self else { return false }
@@ -116,13 +120,12 @@ extension AppSearchViewModel {
         }
         
         do {
-            let response = try await repository.search(term: term, offset: offset)
+            let response = try await networkRepo.search(term: term, offset: offset)
             
             if isLoadingMore {
                 let existingIds = Set(output.results.map { $0.id })
                 let newResults = response.results.filter { !existingIds.contains($0.id) }
                 
-                // Append new unique results
                 output.results.append(contentsOf: newResults)
                 
                 if newResults.isEmpty && !response.results.isEmpty {
@@ -138,6 +141,9 @@ extension AppSearchViewModel {
             }
             
             output.currentOffset = offset
+            
+            let allDownloadedIDs = realmRepo.getAllDownloadedIDs()
+            output.downloadedIDs = Set(allDownloadedIDs)
         } catch {
             if !isLoadingMore {
                 output.results = []

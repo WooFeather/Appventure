@@ -32,7 +32,8 @@ struct TabBarView: View {
             
             AppSearchView(
                 viewModel: AppSearchViewModel(
-                    repository: ItunesRepository.shared
+                    networkRepo: ItunesRepository.shared,
+                    realmRepo: RealmRepository.shared
                 )
             )
                 .asTabModifier(.search)

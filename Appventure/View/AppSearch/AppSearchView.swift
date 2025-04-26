@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// TODO: 당겨서 새로고침
 // TODO: 취소버튼 눌렀을때 아무것도 안뜨게
 struct AppSearchView: View {
     @StateObject var viewModel: AppSearchViewModel
@@ -66,6 +65,11 @@ private extension AppSearchView {
                 }
             }
             .padding(.top)
+        }
+        .refreshable { // TODO: 스크롤뷰 내부에서 작동하도록..?
+          let term = viewModel.input.term.trimmingCharacters(in: .whitespaces)
+          guard !term.isEmpty else { return }
+          viewModel.action(.search)
         }
     }
 }

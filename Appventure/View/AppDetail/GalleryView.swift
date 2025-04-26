@@ -29,6 +29,7 @@ struct GalleryView: View {
                 
                 Spacer()
                 
+                // TODO: 버튼상태 동기화
                 ActionButton(appId: "00000")
             }
             .padding(.horizontal, 24)

@@ -34,6 +34,7 @@ struct ActionButton: View {
                 .background(Color(.systemGray5))
                 .clipShape(Capsule())
         }
+        .buttonStyle(.borderless)
     }
     
     // MARK: - Action

@@ -12,7 +12,7 @@ protocol RealmRepositoryType {
     func getFileURL()
     func fetchAll() -> [DownloadedObject]
     func save(_ downloaded: DownloadedObject)
-    func delete(by id: Int)
+    func delete(by id: String)
 }
 
 final class RealmRepository: RealmRepositoryType {
@@ -39,7 +39,7 @@ final class RealmRepository: RealmRepositoryType {
         }
     }
     
-    func delete(by id: Int) {
+    func delete(by id: String) {
         guard let object = realm.object(ofType: DownloadedObject.self, forPrimaryKey: id) else { return }
         do {
             try realm.write {

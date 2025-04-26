@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MyAppView: View {
     @StateObject var viewModel: MyAppViewModel
+    @State private var searchText: String = ""
     
-    // TODO: 실시간 검색기능
     var body: some View {
         NavigationStack {
             ZStack {
@@ -21,6 +21,13 @@ struct MyAppView: View {
                 }
             }
             .navigationTitle("앱")
+            .navigationDestination(for: String.self) {
+                AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: $0)
+            }
+            .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "게임, 앱, 스토리 등")
+            .onChange(of: searchText) { oldValue, newValue in
+                viewModel.input.searchQuery.send(newValue)
+            }
         }
         .onAppear {
             viewModel.action(.fetchDownloaded)
@@ -31,20 +38,21 @@ struct MyAppView: View {
 // MARK: - DownloadedView
 private extension MyAppView {
     func downloadedView() -> some View {
-        ScrollView {
-            let items = viewModel.output.downloadedApps
-            
-            LazyVStack(spacing: 0) {
-                ForEach(items.indices, id: \.self) { idx in
-                    DownloadedAppCell(item: items[idx])
-                    
-                    if idx < items.count - 1 {
-                        Divider()
-                            .padding(.leading, 84)
+        List {
+            ForEach(viewModel.output.filteredDownloadedApps) { item in
+                NavigationLink(value: item.id) {
+                    DownloadedAppCell(item: item)
+                }
+                .swipeActions {
+                    Button(role: .destructive) {
+                        viewModel.action(.deleteApp(item.id))
+                    } label: {
+                        Label("삭제", systemImage: "trash")
                     }
                 }
             }
         }
+        .listStyle(.plain)
     }
 }
 
@@ -77,8 +85,6 @@ private struct DownloadedAppCell: View {
             
             ActionButton(appId: item.id)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
     }
 }
 

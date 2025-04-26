@@ -11,6 +11,9 @@ struct AppDetailView: View {
     @StateObject var viewModel: AppDetailViewModel
     let appId: String
     
+    @State private var showGalleryView = false
+    @State private var selectedScreenshotIndex = 0
+    
     var body: some View {
         Group {
             if viewModel.output.isLoading {
@@ -139,25 +142,34 @@ private extension AppDetailView {
             Text("미리 보기")
                 .asSectionTitle()
             
-            // TODO: 탭하면 스크린샷 확대 화면 sheet
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
-                    ForEach(app.screenShotsUrls, id: \.self) { url in
+                    ForEach(Array(app.screenShotsUrls.enumerated()), id: \.0) { index, url in
                         AsyncCachedImage(url: URL(string: url)) { image in
                             image
                                 .resizable()
-                               .aspectRatio(0.55, contentMode: .fit)
+                                .aspectRatio(0.55, contentMode: .fit)
                         } placeholder: {
                             ProgressView()
                         }
                         .frame(width: 230)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .onTapGesture {
+                            selectedScreenshotIndex = index
+                            showGalleryView = true
+                        }
                     }
                 }
                 .padding(.horizontal)
             }
         }
         .padding(.vertical)
+        .fullScreenCover(isPresented: $showGalleryView) {
+            GalleryView(
+                urls: app.screenShotsUrls,
+                initialIndex: selectedScreenshotIndex
+            )
+        }
     }
 }
 // MARK: - AdditionalInfo

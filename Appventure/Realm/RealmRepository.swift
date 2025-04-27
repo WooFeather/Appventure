@@ -96,11 +96,14 @@ final class RealmRepository: RealmRepositoryType {
     func startDownload(appId: String) {
         let object = realm.object(ofType: DownloadedObject.self, forPrimaryKey: appId)
             ?? DownloadedObject(value: ["id": appId])
-        
+
         do {
             try realm.write {
                 if object.realm == nil {
                     realm.add(object)
+                    object.createdAt = Date()
+                } else if object.state == .deleted {
+                    object.createdAt = Date() // 다시 받기 할 때 날짜 갱신
                 }
                 object.state = .downloading
                 object.expectedEndDate = Date().addingTimeInterval(30)

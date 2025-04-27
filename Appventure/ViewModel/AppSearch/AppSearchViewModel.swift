@@ -72,6 +72,7 @@ extension AppSearchViewModel {
 // MARK: - Transform
 extension AppSearchViewModel {
     func transform() {
+        // TODO: 두 글자 이상일때만 검색하기
         input.searchTapped
             .map { [weak self] in
                 self?.input.term.trimmingCharacters(in: .whitespaces) ?? ""

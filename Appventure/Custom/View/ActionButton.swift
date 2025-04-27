@@ -29,33 +29,25 @@ struct ActionButton: View {
         object?.state ?? .notDownloaded
     }
     
-    // TODO: 각 상태에 맞게 버튼 모양 변경
     var body: some View {
         Button {
             handleTap()
         } label: {
             switch state {
             case .notDownloaded:
-              Text("받기")
+                basicButton("받기")
             case .downloading:
-              let rem = Int(max(0,
-                (object?.expectedEndDate?.timeIntervalSince(currentDate) ?? 0)
-              ))
-              Text("\(rem)s")
+                downloadingButton()
             case .paused:
-              Text("재개")
+                basicButton("재개", isPaused: true)
             case .completed:
-              Text("열기")
+                basicButton("열기")
             case .deleted:
-              Text("다시 받기")
+                reDownloadButton()
             }
         }
-        .font(.system(size: 14, weight: .semibold))
-        .padding(.vertical, 6)
-        .padding(.horizontal, 22)
-        .background(Color(.systemGray5))
-        .clipShape(Capsule())
         .buttonStyle(.borderless)
+//        .animation(.spring, value: state)
         .onReceive(timer) {
           // @State에게 타이머가 진행될때마다 해당 값을 전달해줌 => 렌더링
           currentDate = $0
@@ -77,5 +69,47 @@ struct ActionButton: View {
     
     private func openApp() {
         print("앱 열기")
+    }
+    
+    // MARK: - ButtonView
+    @ViewBuilder
+    private func basicButton(_ title: String, isPaused: Bool = false) -> some View {
+        if !isPaused {
+            Text(title)
+                .asDownloadButton()
+        } else {
+            HStack(spacing: 2) {
+                Image(systemName: "icloud.and.arrow.down")
+                Text(title)
+            }
+            .asDownloadButton()
+        }
+    }
+    
+    private func reDownloadButton() -> some View {
+        Image(systemName: "icloud.and.arrow.down")
+    }
+    
+    private func downloadingButton() -> some View {
+        let total: TimeInterval = 30
+        let timeLeft = max(0, (object?.expectedEndDate?.timeIntervalSince(currentDate) ?? total))
+        let progress = min(max(1 - timeLeft / total, 0), 1)
+
+        return ZStack {
+            Circle()
+                .stroke(Color(.systemGray4), lineWidth: 2)
+
+            Circle()
+                .trim(from: 0, to: CGFloat(progress))
+                .stroke(style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .foregroundColor(.blue)
+                .rotationEffect(.degrees(-90))
+                .animation(.linear(duration: 1), value: progress)
+
+            Image(systemName: "pause.fill")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.blue)
+        }
+        .frame(width: 30, height: 30)
     }
 }

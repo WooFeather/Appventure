@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private struct SearchViewTextModifier: ViewModifier {
+private struct InfoTextModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.callout.bold())
@@ -16,7 +16,7 @@ private struct SearchViewTextModifier: ViewModifier {
 }
 
 extension View {
-    func asSearchViewText() -> some View {
-        modifier(SearchViewTextModifier())
+    func asInfoText() -> some View {
+        modifier(InfoTextModifier())
     }
 }

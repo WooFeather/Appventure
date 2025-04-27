@@ -43,14 +43,14 @@ private extension AppSearchView {
         switch viewModel.viewState {
         case .initial:
             Text("앱을 검색해보세요")
-                .asSearchViewText()
+                .asInfoText()
         case .searching:
             ProgressView()
         case .found:
             searchResultView()
         case .notFound:
             Text("검색 결과가 없습니다")
-                .asSearchViewText()
+                .asInfoText()
         }
     }
 }

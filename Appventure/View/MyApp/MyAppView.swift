@@ -16,6 +16,9 @@ struct MyAppView: View {
             ZStack {
                 if viewModel.output.isLoading {
                     ProgressView()
+                } else if viewModel.output.filteredDownloadedApps.isEmpty {
+                    Text("다운로드 한 앱이 없습니다")
+                        .asInfoText()
                 } else {
                     downloadedView()
                 }

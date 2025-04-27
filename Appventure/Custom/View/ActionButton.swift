@@ -59,8 +59,6 @@ struct ActionButton: View {
         .onReceive(timer) {
           // @State에게 타이머가 진행될때마다 해당 값을 전달해줌 => 렌더링
           currentDate = $0
-          // 완료 시점이 지났으면 completion 처리
-          realmRepo.completeIfNeeded(appId: appId)
         }
     }
     

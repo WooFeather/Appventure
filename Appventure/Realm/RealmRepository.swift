@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import Combine
 
 protocol RealmRepositoryType {
     func getFileURL()
@@ -18,14 +19,23 @@ protocol RealmRepositoryType {
     func startDownload(appId: String)
     func pauseDownload(appId: String)
     func resumeDownload(appId: String)
-    func completeIfNeeded(appId: String)
 }
 
 final class RealmRepository: RealmRepositoryType {
     static let shared = RealmRepository()
     private let realm = try! Realm()
     
-    private init() { }
+    private var completeCancellable: AnyCancellable?
+    
+    private init() {
+        // 앱 런치 시점에 1초마다 모든 다운로드 상태 점검하는 글로벌 타이머 추가
+        completeCancellable = Timer
+            .publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                self?.completeAllDownloadsIfNeeded()
+            }
+    }
     
     func getFileURL() {
         print(realm.configuration.fileURL ?? "URL 찾을 수 없음")
@@ -134,21 +144,24 @@ final class RealmRepository: RealmRepositoryType {
         }
     }
     
-    func completeIfNeeded(appId: String) {
-        guard let object = realm.object(ofType: DownloadedObject.self, forPrimaryKey: appId),
-              object.state == .downloading,
-              let end = object.expectedEndDate,
-              Date() >= end
-        else { return }
+    private func completeAllDownloadsIfNeeded() {
+        let now = Date()
+        let list = realm.objects(DownloadedObject.self)
+            .filter("stateRaw == %@", DownloadState.downloading.rawValue)
         
+        guard !list.isEmpty else { return }
         do {
             try realm.write {
-                object.state = .completed
-                object.expectedEndDate = nil
-                object.remainingTime = 0
+                for object in list {
+                    if let end = object.expectedEndDate, now >= end {
+                        object.state = .completed
+                        object.expectedEndDate = nil
+                        object.remainingTime = 0
+                    }
+                }
             }
         } catch {
-            print("❌ Realm completeIfNeeded 오류:", error)
+            print("❌ Realm completeAllDownloads 오류:", error)
         }
     }
 }

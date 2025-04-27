@@ -14,7 +14,7 @@ protocol RealmRepositoryType {
     func save(_ downloaded: DownloadedObject)
     func delete(by id: String)
     func getAllDownloadedIDs() -> [String]
-    func bootstrapOnLaunch()
+    func handleAppWillTerminate()
     func startDownload(appId: String)
     func pauseDownload(appId: String)
     func resumeDownload(appId: String)
@@ -64,8 +64,7 @@ final class RealmRepository: RealmRepositoryType {
     }
     
     // MARK: - 다운로드 로직
-    // 앱 런치 시 호출 → “앱 완전 종료 상태”였던 .downloading 레코드를 일시정지로 전환
-    func bootstrapOnLaunch() {
+    func handleAppWillTerminate() {
         let list = realm.objects(DownloadedObject.self)
             .filter("stateRaw == %@", DownloadState.downloading.rawValue)
         
@@ -80,7 +79,7 @@ final class RealmRepository: RealmRepositoryType {
                 }
             }
         } catch {
-            print("❌ Realm bootstrapOnLaunch 오류:", error)
+            print("❌ Realm handleAppWillTerminate 오류:", error)
         }
     }
     

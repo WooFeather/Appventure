@@ -9,9 +9,7 @@ import SwiftUI
 
 @main
 struct AppventureApp: App {
-    init() {
-      RealmRepository.shared.bootstrapOnLaunch()
-    }
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
         WindowGroup {

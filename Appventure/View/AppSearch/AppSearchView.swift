@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-// TODO: 취소버튼 눌렀을때 아무것도 안뜨게
 struct AppSearchView: View {
     @StateObject var viewModel: AppSearchViewModel
+    @State private var isSearching: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -20,9 +20,18 @@ struct AppSearchView: View {
                     searchResultView()
                 }
             }
-            .searchable(text: $viewModel.input.term, prompt: "게임, 앱, 스토리 등")
+            .searchable(
+                text: $viewModel.input.term,
+                isPresented: $isSearching,
+                prompt: "게임, 앱, 스토리 등"
+            )
             .onSubmit(of: .search) {
                 viewModel.action(.search)
+            }
+            .onChange(of: isSearching) { oldValue, newValue in
+                if !newValue {
+                    viewModel.action(.clearResults)
+                }
             }
             .navigationDestination(for: String.self) {
                 AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: $0)

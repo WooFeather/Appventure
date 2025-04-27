@@ -34,6 +34,7 @@ final class AppSearchViewModel: ViewModelType {
         var term: String = ""
         let searchTapped = PassthroughSubject<Void, Never>()
         let loadMore = PassthroughSubject<Void, Never>()
+        let clearResults = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -52,6 +53,7 @@ extension AppSearchViewModel {
     enum Action {
         case search
         case loadMore
+        case clearResults
     }
     
     func action(_ action: Action) {
@@ -60,6 +62,8 @@ extension AppSearchViewModel {
             input.searchTapped.send(())
         case .loadMore:
             input.loadMore.send(())
+        case .clearResults:
+            input.clearResults.send(())
         }
     }
 }
@@ -106,12 +110,19 @@ extension AppSearchViewModel {
                 }
             }
             .store(in: &cancellables)
+        
+        input.clearResults
+            .sink { [weak self] _ in
+                self?.clearResults()
+            }
+            .store(in: &cancellables)
     }
 }
 
 // MARK: - Function
-@MainActor
+
 extension AppSearchViewModel {
+    @MainActor
     func fetchSearchData(for term: String, offset: Int = 0, isLoadingMore: Bool = false) async throws {
         if isLoadingMore {
             output.isLoadingMore = true
@@ -157,5 +168,11 @@ extension AppSearchViewModel {
         } else {
             output.isLoading = false
         }
+    }
+    
+    func clearResults() {
+        output.results.removeAll()
+        output.currentOffset = 0
+        output.hasMoreResults = false
     }
 }

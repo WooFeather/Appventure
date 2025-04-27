@@ -135,32 +135,39 @@ private extension AppDetailView {
 }
 
 // MARK: - Screenshot
-// TODO: 스크린샷이 없을때 대응
 private extension AppDetailView {
     func previewScreenshots(_ app: InfoResultEntity) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("미리 보기")
                 .asSectionTitle()
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 12) {
-                    ForEach(Array(app.screenShotsUrls.enumerated()), id: \.0) { index, url in
-                        AsyncCachedImage(url: URL(string: url)) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(0.55, contentMode: .fit)
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 230)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .onTapGesture {
-                            selectedScreenshotIndex = index
-                            showGalleryView = true
+            if app.screenShotsUrls.isEmpty {
+                Text("스크린샷이 제공되지 않습니다.")
+                    .foregroundStyle(.gray)
+                    .font(.callout.bold())
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 12) {
+                        ForEach(Array(app.screenShotsUrls.enumerated()), id: \.0) { index, url in
+                            AsyncCachedImage(url: URL(string: url)) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(0.55, contentMode: .fit)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 230)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .onTapGesture {
+                                selectedScreenshotIndex = index
+                                showGalleryView = true
+                            }
                         }
                     }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
             }
         }
         .padding(.vertical)

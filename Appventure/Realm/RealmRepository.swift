@@ -70,7 +70,9 @@ final class RealmRepository: RealmRepositoryType {
     
     func getAllDownloadedIDs() -> [String] {
         let realm = try! Realm()
-        return realm.objects(DownloadedObject.self).map { $0.id }
+        return realm.objects(DownloadedObject.self)
+            .filter { $0.isDeleted == false }
+            .map { $0.id }
     }
     
     // MARK: - 다운로드 로직

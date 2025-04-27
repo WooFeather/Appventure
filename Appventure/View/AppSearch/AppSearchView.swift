@@ -14,11 +14,7 @@ struct AppSearchView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                if viewModel.output.isLoading {
-                    ProgressView()
-                } else {
-                    searchResultView()
-                }
+                bodyContents
             }
             .searchable(
                 text: $viewModel.input.term,
@@ -37,6 +33,24 @@ struct AppSearchView: View {
                 AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: $0)
             }
             .navigationTitle("검색")
+        }
+    }
+}
+
+private extension AppSearchView {
+    @ViewBuilder
+    var bodyContents: some View {
+        switch viewModel.viewState {
+        case .initial:
+            Text("앱을 검색해보세요")
+                .asSearchViewText()
+        case .searching:
+            ProgressView()
+        case .found:
+            searchResultView()
+        case .notFound:
+            Text("검색 결과가 없습니다")
+                .asSearchViewText()
         }
     }
 }

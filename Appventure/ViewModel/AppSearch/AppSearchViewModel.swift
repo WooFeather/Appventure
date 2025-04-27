@@ -45,6 +45,7 @@ final class AppSearchViewModel: ViewModelType {
         var hasMoreResults: Bool = true
         var isDownloaded: Bool = false
         var downloadedIDs: Set<String> = []
+        var hasSearched: Bool = false
     }
 }
 
@@ -89,6 +90,8 @@ extension AppSearchViewModel {
                         throw error
                     }
                 }
+                
+                self.output.hasSearched = true
             }
             .store(in: &cancellables)
         
@@ -114,6 +117,7 @@ extension AppSearchViewModel {
         input.clearResults
             .sink { [weak self] _ in
                 self?.clearResults()
+                self?.output.hasSearched = false
             }
             .store(in: &cancellables)
     }
@@ -174,5 +178,15 @@ extension AppSearchViewModel {
         output.results.removeAll()
         output.currentOffset = 0
         output.hasMoreResults = false
+    }
+}
+
+// MARK: - ViewState
+extension AppSearchViewModel {
+    var viewState: SearchViewState {
+        if output.isLoading { return .searching }
+        if !output.hasSearched { return .initial }
+        if output.results.isEmpty { return .notFound }
+        return .found
     }
 }

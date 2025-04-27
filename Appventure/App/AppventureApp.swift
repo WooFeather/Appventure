@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct AppventureApp: App {
+    init() {
+      RealmRepository.shared.bootstrapOnLaunch()
+    }
+    
     var body: some Scene {
         WindowGroup {
             TabBarView()

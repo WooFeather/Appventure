@@ -105,10 +105,12 @@ extension MyAppViewModel {
         output.isLoading = true
         
         let realmObjects = realmRepo.fetchAll()
+        // 전체 realm의 데이터가 아닌 state가 completed인 데이터들만 보여줌
+        let downloadedObjects = realmObjects.filter { $0.state == .completed }
         let idDateMap = Dictionary(uniqueKeysWithValues:
-            realmObjects.map { ($0.id, $0.createdAt) })
+                                    downloadedObjects.map { ($0.id, $0.createdAt) })
         
-        let ids = realmObjects
+        let ids = downloadedObjects
             .sorted(by: { $0.createdAt > $1.createdAt })
             .map(\.id)
         

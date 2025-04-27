@@ -8,41 +8,68 @@
 import SwiftUI
 import RealmSwift
 
+// TODO: MVVM으로 분리
 struct ActionButton: View {
     @ObservedResults(DownloadedObject.self) private var downloaded
-    private var repository = RealmRepository.shared
     let appId: String
     
-    private var isDownloaded: Bool {
-        downloaded.contains(where: { $0.id == appId })
+    private let realmRepo = RealmRepository.shared
+    
+    // 1초마다 체크
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    private var object: DownloadedObject? {
+        downloaded.first { $0.id == appId }
     }
     
-    init(appId: String) {
-        self.appId = appId
+    private var state: DownloadState {
+        object?.state ?? .notDownloaded
     }
     
+    // TODO: 각 상태에 맞게 버튼 모양 변경
     var body: some View {
         Button {
-            // TODO: 타이머시작/일시정지
-            download()
+            handleTap()
         } label: {
-            // TODO: 상태에따른 다른 레이블
-            Text(isDownloaded ? "열기" : "받기")
-                .font(.system(size: 14, weight: .semibold))
-                .padding(.vertical, 6)
-                .padding(.horizontal, 22)
-                .background(Color(.systemGray5))
-                .clipShape(Capsule())
+            switch state {
+            case .notDownloaded:
+                Text("받기")
+            case .downloading:
+                let rem = Int(max(0, object?.expectedEndDate?.timeIntervalSinceNow ?? 0))
+                Text("\(rem)s")
+            case .paused:
+                Text("재개")
+            case .completed:
+                Text("열기")
+            case .deleted:
+                Text("다시 받기")
+            }
         }
+        .font(.system(size: 14, weight: .semibold))
+        .padding(.vertical, 6)
+        .padding(.horizontal, 22)
+        .background(Color(.systemGray5))
+        .clipShape(Capsule())
         .buttonStyle(.borderless)
+        .onReceive(timer) { _ in
+            realmRepo.completeIfNeeded(appId: appId)
+        }
     }
     
-    // MARK: - Action
-    private func download() {
-        repository.getFileURL()
-        if !isDownloaded {
-            let obj = DownloadedObject(value: ["id": appId])
-            repository.save(obj)
+    private func handleTap() {
+        switch state {
+        case .notDownloaded, .deleted:
+            realmRepo.startDownload(appId: appId)
+        case .downloading:
+            realmRepo.pauseDownload(appId: appId)
+        case .paused:
+            realmRepo.resumeDownload(appId: appId)
+        case .completed:
+            openApp()
         }
+    }
+    
+    private func openApp() {
+        print("앱 열기")
     }
 }

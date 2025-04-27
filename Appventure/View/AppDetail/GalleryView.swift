@@ -10,12 +10,14 @@ import SwiftUI
 // TODO: 두 번째 스크린샷을 탭했을때 첫 번째 스크린샷이 뜨는 문제 해결
 struct GalleryView: View {
     let urls: [String]
+    let appId: String
     @State private var currentIndex: Int
     @Environment(\.dismiss) private var dismiss
     
-    init(urls: [String], initialIndex: Int) {
+    init(urls: [String], initialIndex: Int, appId: String) {
         self.urls = urls
         _currentIndex = State(initialValue: initialIndex)
+        self.appId = appId
     }
     
     var body: some View {
@@ -29,8 +31,7 @@ struct GalleryView: View {
                 
                 Spacer()
                 
-                // TODO: 버튼상태 동기화
-                ActionButton(appId: "00000")
+                ActionButton(appId: appId)
             }
             .padding(.horizontal, 24)
             .padding(.top, 16)

@@ -111,7 +111,6 @@ private extension AppDetailView {
 }
 
 // MARK: - NewFeature
-// TODO: 더보기로 확장
 private extension AppDetailView {
     func newFeatures(_ app: InfoResultEntity) -> some View {
         
@@ -168,7 +167,8 @@ private extension AppDetailView {
         .fullScreenCover(isPresented: $showGalleryView) {
             GalleryView(
                 urls: app.screenShotsUrls,
-                initialIndex: selectedScreenshotIndex
+                initialIndex: selectedScreenshotIndex,
+                appId: app.id
             )
         }
     }

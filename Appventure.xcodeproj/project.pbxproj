@@ -10,7 +10,22 @@
 		790392942DBA7AB80030697E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 790392932DBA7AB80030697E /* .gitignore */; };
 		790392A82DBA7C6C0030697E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 790392A72DBA7C6C0030697E /* Alamofire */; };
 		7903938F2DBBE04B0030697E /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7903938E2DBBE04B0030697E /* RealmSwift */; };
+		790394562DBDF6650030697E /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 7903938E2DBBE04B0030697E /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		790394572DBDF6650030697E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				790394562DBDF6650030697E /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		790392792DBA78FE0030697E /* Appventure.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Appventure.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +80,7 @@
 				790392752DBA78FE0030697E /* Sources */,
 				790392762DBA78FE0030697E /* Frameworks */,
 				790392772DBA78FE0030697E /* Resources */,
+				790394572DBDF6650030697E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -15,6 +15,9 @@ struct ActionButton: View {
     
     private let realmRepo = RealmRepository.shared
     
+    // 뷰 갱신 트리거
+    @State private var currentDate: Date = Date()
+    
     // 1초마다 체크
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -33,16 +36,18 @@ struct ActionButton: View {
         } label: {
             switch state {
             case .notDownloaded:
-                Text("받기")
+              Text("받기")
             case .downloading:
-                let rem = Int(max(0, object?.expectedEndDate?.timeIntervalSinceNow ?? 0))
-                Text("\(rem)s")
+              let rem = Int(max(0,
+                (object?.expectedEndDate?.timeIntervalSince(currentDate) ?? 0)
+              ))
+              Text("\(rem)s")
             case .paused:
-                Text("재개")
+              Text("재개")
             case .completed:
-                Text("열기")
+              Text("열기")
             case .deleted:
-                Text("다시 받기")
+              Text("다시 받기")
             }
         }
         .font(.system(size: 14, weight: .semibold))
@@ -51,8 +56,11 @@ struct ActionButton: View {
         .background(Color(.systemGray5))
         .clipShape(Capsule())
         .buttonStyle(.borderless)
-        .onReceive(timer) { _ in
-            realmRepo.completeIfNeeded(appId: appId)
+        .onReceive(timer) {
+          // @State에게 타이머가 진행될때마다 해당 값을 전달해줌 => 렌더링
+          currentDate = $0
+          // 완료 시점이 지났으면 completion 처리
+          realmRepo.completeIfNeeded(appId: appId)
         }
     }
     

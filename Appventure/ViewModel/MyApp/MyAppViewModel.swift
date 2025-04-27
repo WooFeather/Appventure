@@ -104,9 +104,9 @@ extension MyAppViewModel {
     private func fetchDownloadedApps() async throws {
         output.isLoading = true
         
-        let realmObjects = realmRepo.fetchAll()
         // 전체 realm의 데이터가 아닌 state가 completed인 데이터들만 보여줌
-        let downloadedObjects = realmObjects.filter { $0.state == .completed }
+        let downloadedObjects = realmRepo.fetchAll()
+            .filter { $0.state == .completed }
         let idDateMap = Dictionary(uniqueKeysWithValues:
                                     downloadedObjects.map { ($0.id, $0.createdAt) })
         

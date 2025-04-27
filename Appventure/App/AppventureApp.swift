@@ -13,7 +13,7 @@ struct AppventureApp: App {
     
     var body: some Scene {
         WindowGroup {
-            TabBarView()
+            TabBarView(realmRepo: RealmRepository.shared)
         }
     }
 }

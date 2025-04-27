@@ -19,6 +19,7 @@ protocol RealmRepositoryType {
     func startDownload(appId: String)
     func pauseDownload(appId: String)
     func resumeDownload(appId: String)
+    func pauseAllDownloadsOnNetworkDisconnect()
 }
 
 final class RealmRepository: RealmRepositoryType {
@@ -167,6 +168,27 @@ final class RealmRepository: RealmRepositoryType {
             }
         } catch {
             print("❌ Realm completeAllDownloads 오류:", error)
+        }
+    }
+    
+    // 네트워크 끊김 시 호출해서 모든 .downloading 레코드를 .paused로 전환
+    func pauseAllDownloadsOnNetworkDisconnect() {
+        let list = realm.objects(DownloadedObject.self)
+            .filter("stateRaw == %@", DownloadState.downloading.rawValue)
+        
+        guard !list.isEmpty else { return }
+        do {
+            try realm.write {
+                list.forEach { object in
+                    if let end = object.expectedEndDate {
+                        object.remainingTime = max(0, end.timeIntervalSinceNow)
+                    }
+                    object.expectedEndDate = nil
+                    object.state = .paused
+                }
+            }
+        } catch {
+            print("❌ pauseAllDownloads 오류:", error)
         }
     }
 }

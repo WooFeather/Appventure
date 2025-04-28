@@ -61,6 +61,10 @@ private extension AppSearchView {
     func searchResultView() -> some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
+                ProgressView()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.bottom, 120)
+                
                 ForEach(viewModel.output.results, id: \.id) { app in
                     NavigationLink(value: app.id) {
                         appSearchCell(app: app)
@@ -88,12 +92,13 @@ private extension AppSearchView {
                     }
                 }
             }
-            .padding(.top)
+            .offset(y: -150)
         }
-        .refreshable { // TODO: 스크롤뷰 내부에서 작동하도록..?
-          let term = viewModel.input.term.trimmingCharacters(in: .whitespaces)
-          guard !term.isEmpty else { return }
-          viewModel.action(.search)
+        .refreshable {
+            let term = viewModel.input.term.trimmingCharacters(in: .whitespaces)
+            guard !term.isEmpty else { return }
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            viewModel.action(.search)
         }
     }
 }

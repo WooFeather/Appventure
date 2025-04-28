@@ -7,12 +7,15 @@
 
 import SwiftUI
 
+struct ScreenshotItem: Identifiable {
+    let id: Int
+}
+
 struct AppDetailView: View {
     @StateObject var viewModel: AppDetailViewModel
     let appId: String
     
-    @State private var showGalleryView = false
-    @State private var selectedScreenshotIndex = 0
+    @State private var presentedItem: ScreenshotItem? = nil
     
     var body: some View {
         Group {
@@ -67,6 +70,7 @@ private extension AppDetailView {
         .padding(.horizontal)
     }
 }
+
 // MARK: - MetaInfo
 private extension AppDetailView {
     func metaCard(_ label: String, _ value: String) -> some View {
@@ -161,8 +165,7 @@ private extension AppDetailView {
                             .frame(width: 230)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .onTapGesture {
-                                selectedScreenshotIndex = index
-                                showGalleryView = true
+                                presentedItem = ScreenshotItem(id: index)
                             }
                         }
                     }
@@ -171,15 +174,16 @@ private extension AppDetailView {
             }
         }
         .padding(.vertical)
-        .fullScreenCover(isPresented: $showGalleryView) {
+        .fullScreenCover(item: $presentedItem) { item in
             GalleryView(
                 urls: app.screenShotsUrls,
-                initialIndex: selectedScreenshotIndex,
+                initialIndex: item.id,
                 appId: app.id
             )
         }
     }
 }
+
 // MARK: - AdditionalInfo
 private extension AppDetailView {
     func additionalInfo(_ app: InfoResultEntity) -> some View {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ExpandableText: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var expanded: Bool = false
     @State private var truncated: Bool = false
     private var text: String
@@ -46,7 +47,7 @@ struct ExpandableText: View {
                     Text("더 보기")
                         .foregroundStyle(.blue)
                         .frame(width: 60, height: 20)
-                        .background(.white)
+                        .background(colorScheme == .light ? Color.white : Color.black)
                 }
                 .opacity(expanded ? 0 : 1)
                 

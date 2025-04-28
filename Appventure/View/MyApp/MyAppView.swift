@@ -55,6 +55,9 @@ private extension MyAppView {
                 }
             }
         }
+        .refreshable {
+            viewModel.action(.fetchDownloaded)
+        }
         .listStyle(.plain)
     }
 }

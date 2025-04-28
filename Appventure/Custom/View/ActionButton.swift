@@ -8,7 +8,6 @@
 import SwiftUI
 import RealmSwift
 
-// TODO: MVVM으로 분리
 struct ActionButton: View {
     @ObservedResults(DownloadedObject.self) private var downloaded
     let appId: String

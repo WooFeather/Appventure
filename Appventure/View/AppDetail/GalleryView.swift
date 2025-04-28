@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// TODO: 두 번째 스크린샷을 탭했을때 첫 번째 스크린샷이 뜨는 문제 해결
 struct GalleryView: View {
     let urls: [String]
     let appId: String

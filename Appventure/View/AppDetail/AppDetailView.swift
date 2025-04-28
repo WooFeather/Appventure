@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-struct ScreenshotItem: Identifiable {
-    let id: Int
-}
-
 struct AppDetailView: View {
     @StateObject var viewModel: AppDetailViewModel
     let appId: String
@@ -221,6 +217,10 @@ private extension AppDetailView {
     }
 }
 
+// MARK: - ScreenshotItem
+struct ScreenshotItem: Identifiable {
+    let id: Int
+}
 
 #Preview {
     AppDetailView(viewModel: AppDetailViewModel(repository: ItunesRepository.shared), appId: "1464496236")

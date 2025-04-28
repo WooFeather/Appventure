@@ -25,6 +25,7 @@ struct AppDetailView: View {
                         metaInfoScroll(app)
                         newFeatures(app)
                         previewScreenshots(app)
+                        description(app)
                         additionalInfo(app)
                     }
                 }
@@ -177,6 +178,21 @@ private extension AppDetailView {
                 appId: app.id
             )
         }
+    }
+}
+
+// MARK: - Description
+private extension AppDetailView {
+    func description(_ app: InfoResultEntity) -> some View {
+        VStack {
+            Divider()
+                .padding()
+            
+            ExpandableText(app.description, lineLimit: 3)
+                .font(.callout)
+                .padding(.horizontal)
+        }
+        .padding(.bottom)
     }
 }
 

@@ -27,6 +27,7 @@ struct InfoResultEntity {
     let screenShotsUrls: [String]
     let age: String // trackContentRating
     let languages: [String] // languageCodesISO2A
+    let description: String
     
     let releaseNotes: String
     let currentReleaseDate: String // currentVersionReleaseDate
@@ -51,6 +52,7 @@ extension AppInfoDTO {
                     screenShotsUrls: $0.screenshotUrls,
                     age: $0.trackContentRating,
                     languages: $0.languageCodesISO2A,
+                    description: $0.description,
                     releaseNotes: $0.releaseNotes ?? "",
                     currentReleaseDate: $0.currentVersionReleaseDate,
                     version: $0.version

@@ -77,7 +77,7 @@ extension AppSearchViewModel {
             .map { [weak self] in
                 self?.input.term.trimmingCharacters(in: .whitespaces) ?? ""
             }
-            .removeDuplicates()
+            // .removeDuplicates() // 취소버튼을 누른 이후에도 중복검색이 안돼서 일단 주석처리
             .filter { !$0.isEmpty }
             .sink { [weak self] term in
                 guard let self = self else { return }

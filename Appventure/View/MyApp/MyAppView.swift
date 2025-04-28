@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// TODO: UIAnimation 적용
 struct MyAppView: View {
     @StateObject var viewModel: MyAppViewModel
     @State private var searchText: String = ""

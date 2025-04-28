@@ -20,8 +20,9 @@ struct ExpandableText: View {
     }
     
     var body: some View {
-        HStack(alignment: .lastTextBaseline) {
+        ZStack(alignment: .bottomTrailing) {
             Text(text)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .lineLimit(expanded ? nil : lineLimit)
                 .background(
                     Text(text).lineLimit(lineLimit)
@@ -39,10 +40,16 @@ struct ExpandableText: View {
                         .hidden()
             )
             if truncated {
-                Button("더 보기") {
+                Button {
                     withAnimation { expanded = true }
+                } label: {
+                    Text("더 보기")
+                        .foregroundStyle(.blue)
+                        .frame(width: 60, height: 20)
+                        .background(.white)
                 }
                 .opacity(expanded ? 0 : 1)
+                
             }
         }
     }

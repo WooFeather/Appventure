@@ -47,7 +47,7 @@ struct ActionButton: View {
             }
         }
         .buttonStyle(.borderless)
-//        .animation(.spring, value: state)
+        .animation(.easeInOut, value: state)
         .onReceive(timer) {
           // @State에게 타이머가 진행될때마다 해당 값을 전달해줌 => 렌더링
           currentDate = $0

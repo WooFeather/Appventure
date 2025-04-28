@@ -72,7 +72,7 @@ final class RealmRepository: RealmRepositoryType {
     func getAllDownloadedIDs() -> [String] {
         let realm = try! Realm()
         return realm.objects(DownloadedObject.self)
-            .filter { $0.isDeleted == false }
+            .filter { $0.isDeleted == false && $0.state == .completed }
             .map { $0.id }
     }
     

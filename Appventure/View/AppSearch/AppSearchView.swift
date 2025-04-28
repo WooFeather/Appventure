@@ -34,6 +34,7 @@ struct AppSearchView: View {
             }
             .navigationTitle("검색")
         }
+        .alert("검색어는 두 글자 이상 입력해주세요.", isPresented: $viewModel.output.showValidationAlert) { }
     }
 }
 

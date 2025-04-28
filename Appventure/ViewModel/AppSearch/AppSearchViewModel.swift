@@ -46,6 +46,7 @@ final class AppSearchViewModel: ViewModelType {
         var isDownloaded: Bool = false
         var downloadedIDs: Set<String> = []
         var hasSearched: Bool = false
+        var showValidationAlert: Bool = false
     }
 }
 
@@ -72,7 +73,6 @@ extension AppSearchViewModel {
 // MARK: - Transform
 extension AppSearchViewModel {
     func transform() {
-        // TODO: 두 글자 이상일때만 검색하기
         input.searchTapped
             .map { [weak self] in
                 self?.input.term.trimmingCharacters(in: .whitespaces) ?? ""
@@ -82,17 +82,22 @@ extension AppSearchViewModel {
             .sink { [weak self] term in
                 guard let self = self else { return }
                 
-                Task { @MainActor in
-                    do {
-                        self.output.currentOffset = 0
-                        self.output.hasMoreResults = true
-                        try await self.fetchSearchData(for: term, offset: 0, isLoadingMore: false)
-                    } catch {
-                        throw error
+                if term.count < 2 {
+                    output.showValidationAlert = true
+                } else {
+                    output.showValidationAlert = false
+                    Task { @MainActor in
+                        do {
+                            self.output.currentOffset = 0
+                            self.output.hasMoreResults = true
+                            try await self.fetchSearchData(for: term, offset: 0, isLoadingMore: false)
+                        } catch {
+                            throw error
+                        }
                     }
+                    
+                    self.output.hasSearched = true
                 }
-                
-                self.output.hasSearched = true
             }
             .store(in: &cancellables)
         
